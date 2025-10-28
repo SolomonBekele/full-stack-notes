@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D Canvas: Rotating Cube (WebGL)</title>
+  <style>
+    body {
+      margin: 0;
+      background: #111;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    canvas {
+      border: 1px solid #444;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="webglCube" width="600" height="600"></canvas>
+
+  <script>
+    const canvas = document.getElementById('webglCube');
+    const gl = canvas.getContext('webgl');
+
+    if (!gl) {
+      alert('WebGL not supported in your browser!');
+    }
+
+    const vertexShaderSource = `
+      attribute vec3 coordinates;
+      attribute vec3 color;
+      varying vec3 vColor;
+      uniform mat4 uMatrix;
+      void main(void) {
+        gl_Position = uMatrix * vec4(coordinates, 1.0);
+        vColor = color;
+      }`;
+
+    const fragmentShaderSource = `
+      precision mediump float;
+      varying vec3 vColor;
+      void main(void) {
+        gl_FragColor = vec4(vColor, 1.0);
+      }`;
+
+    function createShader(type, source) {
+      const shader = gl.createShader(type);
+      gl.shaderSource(shader, source);
+      gl.compileShader(shader);
+      return shader;
+    }
+
+    const vertexShader = createShader(gl.VERTEX_SHADER, vertexShaderSource);
+    const fragmentShader = createShader(gl.FRAGMENT_SHADER, fragmentShaderSource);
+
+    const program = gl.createProgram();
+    gl.attachShader(program, vertexShader);
+    gl.attachShader(program, fragmentShader);
+    gl.linkProgram(program);
+    gl.useProgram(program);
+
+    const vertices = [
+      // X, Y, Z,   R, G, B
+      -1, -1, -1,  1, 0, 0,
+       1, -1, -1,  0, 1, 0,
+       1,  1, -1,  0, 0, 1,
+      -1,  1, -1,  1, 1, 0,
+      -1, -1,  1,  1, 0, 1,
+       1, -1,  1,  0, 1, 1,
+       1,  1,  1,  1, 1, 1,
+      -1,  1,  1,  0, 0, 0
+    ];
+
+    const indices = [
+      0, 1, 2, 0, 2, 3,
+      4, 5, 6, 4, 6, 7,
+      0, 1, 5, 0, 5, 4,
+      2, 3, 7, 2, 7, 6,
+      0, 3, 7, 0, 7, 4,
+      1, 2, 6, 1, 6, 5
+    ];
+
+    const vertexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+
+    const indexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
+
+    const coord = gl.getAttribLocation(program, "coordinates");
+    gl.vertexAttribPointer(coord, 3, gl.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 0);
+    gl.enableVertexAttribArray(coord);
+
+    const color = gl.getAttribLocation(program, "color");
+    gl.vertexAttribPointer(color, 3, gl.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
+    gl.enableVertexAttribArray(color);
+
+    const uMatrix = gl.getUniformLocation(program, "uMatrix");
+
+    function getRotationMatrix(angleX, angleY) {
+      const cosX = Math.cos(angleX), sinX = Math.sin(angleX);
+      const cosY = Math.cos(angleY), sinY = Math.sin(angleY);
+      return new Float32Array([
+        cosY, 0, sinY, 0,
+        sinX*sinY, cosX, -sinX*cosY, 0,
+        -cosX*sinY, sinX, cosX*cosY, 0,
+        0, 0, -5, 1
+      ]);
+    }
+
+    function render(time) {
+      gl.enable(gl.DEPTH_TEST);
+      gl.clearColor(0.05, 0.05, 0.05, 1.0);
+      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+      const matrix = getRotationMatrix(time * 0.001, time * 0.0012);
+      gl.uniformMatrix4fv(uMatrix, false, matrix);
+
+      gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
+      requestAnimationFrame(render);
+    }
+
+    render(0);
+  </script>
+</body>
+</html>

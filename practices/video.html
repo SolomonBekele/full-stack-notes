@@ -1,0 +1,28 @@
+<video controls width="600">
+  <source src="files/index.mp4" type="video/mp4">
+  <track src="files/captions.vtt" kind="subtitles" srclang="en" label="English">
+  Your browser does not support the video tag.
+</video>
+
+<table border="1">
+  <tr>
+    <td>Row 1</td>
+  </tr>
+  <tr style="visibility: collapse;">
+    <td>Row 2 (collapsed)</td>
+  </tr>
+  <tr>
+    <td>Row 3</td>
+  </tr>
+</table>
+
+<p id="text" style="opacity: 10;">Hello World!</p>
+<button onclick="toggleVisibility()">Toggle Visibility</button>
+
+<script>
+function toggleVisibility() {
+  const p = document.getElementById('text');
+  p.style.visibility = (p.style.visibility === 'hidden') ? 'visible' : 'hidden';
+}
+</script>
+

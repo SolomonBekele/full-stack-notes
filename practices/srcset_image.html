@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+<link rel="preload" as="image" href="images/download.png" type="image/png">
+    <title>Document</title>
+</head>
+
+<body>
+    <img alt="Descriptive text for screen readers"
+     width="300" 
+     height="200"
+     loading="lazy"
+        decoding="async" fetchpriority="high" srcset="
+    images/user1.jpg 320w,
+    images/fuel.png 640w,
+    images/logo.png 960w" 
+    
+    
+     >
+   
+   
+     <picture>
+  <!-- Modern formats first -->
+  <source type="image/webp" srcset="images/calander3334.webp">
+  <source type="image/avif" srcset="images/fuel333.avif">
+  
+  
+  <!-- Art direction for different screen sizes -->
+  <source media="(min-width: 800px)" srcset="image-desktop.jpg">
+  <source media="(min-width: 400px)" srcset="image-tablet.jpg">
+  
+  <!-- Fallback image -->
+  <img src="images/fuel.png" alt="Description" loading="lazy">
+</picture>
+
+<figure>
+  <img src="images/calander333.webp" width="200"  alt="Website before redesign">
+  <img src="images/download.png"width="200" alt="Website after redesign">
+  <figcaption>Before and after comparison of our website redesign</figcaption>
+</figure>
+
+
+<!-- Complex images with longdesc -->
+<img src="complex-chart.png" 
+     alt="Quarterly sales data chart"
+     longdesc="#chart-description">
+<div id="chart-description">
+</body>
+
+</html>
