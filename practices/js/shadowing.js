@@ -11,6 +11,8 @@
 
 
 // Illegal shadowing:- Shadowing of let to var and it will throw syntax error.
+//  var is function/global-scoped and hoisted; let/const are block-scoped. 
+// Redeclaring the same identifier with different scopes (var vs let/const) will cause a parse-time error.
 
 let b= 10;
 
